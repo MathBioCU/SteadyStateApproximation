@@ -121,27 +121,26 @@ plt.close('all')
 # Generates Meshsize vs Absolute error plot
 plt.figure(1)
 
-step_size = 1/dimens
 
-plt.plot( step_size ,  conv_error , linewidth=1, color='blue', marker='o', markersize=10)
+plt.plot( dimens ,  conv_error , linewidth=1, color='blue', marker='o', markersize=10)
 
 x1, x2, y1, y2 = plt.axis()
 plt.axis([x1 - 0.1*x1, x2+0.01*x2, y1, y2])
-plt.ylabel( 'Absolute error', fontsize=12)
-plt.xlabel( 'Mesh size', fontsize=12)
+plt.ylabel( '$\Vert u - u_n  \Vert_\infty$', fontsize=20)
+plt.xlabel( '$n$', fontsize=20)
 
 plt.savefig('convergence_plot_sinko_streifer.png', dpi=400)
 
 #Generates comparison plot for n=100
 plt.figure(2)
 
-line1, = plt.plot( xx_100 , actual_sol_100 , linewidth=2 , color='blue', label='Exact solution' )
-line2, = plt.plot( xx_100 , appr_sol_100 , linewidth=0 , color='black' ,
+line1, = plt.plot( xx_100 , 100 * actual_sol_100 , linewidth=2 , color='blue', label='Exact solution' )
+line2, = plt.plot( xx_100 , 100 * appr_sol_100 , linewidth=0 , color='black' ,
                    marker='o', markersize=3 , label='Approximate solution')
 
-plt.ylabel( '$u_{*}(x)$ (number density)', fontsize=12)
-plt.xlabel( '$x$ (size of a floc)', fontsize=12)
-plt.legend(handler_map={line1: HandlerLine2D()})
+plt.ylabel( '$u_{*}(x)$', fontsize=20)
+plt.xlabel( '$x$', fontsize=20 )
+plt.legend( handler_map={line1: HandlerLine2D()} )
 
 
 plt.savefig( 'sinko_streifer_100.png' , dpi=400 )

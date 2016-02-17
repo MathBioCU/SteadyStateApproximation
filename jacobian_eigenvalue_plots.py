@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import scipy.linalg as lin
 
 
-
 # Minimum and maximum floc sizes
 x0 = 0
 x1 = 1  
@@ -123,78 +122,8 @@ def initialization(N , x1=x1 , x0=x0):
 
     return (An, Ain, Aout, nu, N, dx)
 
-An, Ain, Aout, nu, N, dx = initialization( 100 )
-
-#The right hand side of the evolution equation
-def root_finding( y ,  An=An , Aout=Aout , Ain=Ain):
-    
-    if np.any( y < 0):
-        
-        out =  np.abs(y)
-    else:
-        a = np.zeros_like(y)
-    
-        a [ range( 1 , len( a ) ) ] = y [ range( len( y ) - 1 ) ]    
-    
-        out = np.dot( Ain * lin.toeplitz( np.zeros_like(y) , a).T - ( Aout.T * y ).T + An , y ) 
-              
-    return out
-
-#Exact Jacobian of the RHS 
-def exact_jacobian(y, An=An, Aout=Aout, Ain=Ain):
-    
-    a = np.zeros_like(y)
-    
-    a [ range( 1 , len( a ) ) ] = y [ range( len( y ) - 1 ) ] 
-    
-    out = An - ( Aout.T * y ).T - np.diag( np.dot(Aout , y) ) + 2*Ain * lin.toeplitz( np.zeros_like(y) , a).T
-    
-    return out    
-
-sol = fsolve(root_finding ,  500*np.ones(N) , fprime = exact_jacobian , xtol = 1e-8)
-sol [sol <= 0] = 0
-
-
-print 'Frobenius norm of obtained equilibrium   '+ str(np.sqrt( np.sum( sol * sol ) ))
-
-a = root_finding( sol )
-
-print 'Error from Powell\'s hybrid method   ' + str(np.linalg.norm(a, np.inf) )
-
-evals = np.linalg.eig( exact_jacobian( sol ) )[0]
-print 'Largest eigenvalue of Jacobian  ' + str( np.max( np.real(  evals ) ) ) 
-
-real_part = np.real( evals )
-imag_part = np.imag( evals )
-
-
-plt.close('all')
-
-
-fig, ax = plt.subplots()
-
-ax.scatter(real_part , imag_part)
-
-#ax.set_aspect('equal')
-ax.grid(True, which='both')
-
-
-ax.spines['left'].set_position('zero')
-
-
-ax.spines['right'].set_color('none')
-ax.yaxis.tick_left()
-
-
-ax.spines['bottom'].set_position('zero')
-ax.spines['top'].set_color('none')
-ax.xaxis.tick_bottom()
-
-#plt.savefig('jac_evals_100.png' , dpi=400)
 
 largest_eig = np.zeros(20)
-
-
 
 
 for mm in range(20):
@@ -228,9 +157,7 @@ for mm in range(20):
     
     sol = fsolve(root_finding ,  500*np.ones(N) , fprime = exact_jacobian , xtol = 1e-8)
 
-    sol [sol <= 0] = 0
-    
-    largest_eig[ mm ] = np.max( np.real( lin.eig( exact_jacobian( sol ) ) [0] ) )
+    largest_eig[ mm ] = np.max( np.real( lin.eig( dx * exact_jacobian( sol ) ) [0] ) )
     
  
 An, Ain, Aout, nu, N, dx = initialization( 1000 )
@@ -264,7 +191,7 @@ def exact_jacobian(y, An=An, Aout=Aout, Ain=Ain):
 sol = fsolve(root_finding ,  500*np.ones(N) , fprime = exact_jacobian , xtol = 1e-8)
 sol [sol <= 0] = 0
 
-larg_eval_for_1000 = np.max( np.real( lin.eig( exact_jacobian( sol ) ) [0] ) )
+larg_eval_for_1000 = np.max( np.real( lin.eig( dx * exact_jacobian( sol ) ) [0] ) )
 
 dim_size = np.arange(5, 105, 5)
 
@@ -274,12 +201,15 @@ plt.close('all')
 
 plt.figure(1)
 
-plt.plot(dim_size , largest_eig , linewidth=2)
+plt.plot(dim_size , largest_eig , linewidth=1 , color='blue' ,
+                   marker='o', markersize=10 , )
 
 plt.axhline(y =  larg_eval_for_1000 , color='k' , linestyle='--')
 
 myaxis = list ( plt.axis() )
-myaxis[0] = 5
+myaxis[0] = 4.5
+myaxis[1] = 100.5
+myaxis[-1] = 0.025
 plt.axis( myaxis )
 
 plt.xticks( [5, 20 , 40, 60, 80, 100] )
@@ -287,7 +217,63 @@ plt.xticks( [5, 20 , 40, 60, 80, 100] )
 plt.xlabel('$n$' , fontsize=20)
 plt.ylabel('Largest real part' , fontsize=15)
 
-#plt.savefig('evals_convergence.png' , dpi=400)
+plt.savefig('evals_convergence.png' , dpi=400 ,  bbox_inches='tight')
+
+
+for mm in [10, 50 , 200]:
+    
+    An, Ain, Aout, nu, N, dx = initialization( mm )
+    
+    def root_finding( y ,  An=An , Aout=Aout , Ain=Ain):
+    
+        if np.any( y < 0):
+        
+            out =  np.abs(y)
+        else:
+            a = np.zeros_like(y)
+            
+            a [ range( 1 , len( a ) ) ] = y [ range( len( y ) - 1 ) ]    
+    
+            out = np.dot( Ain * lin.toeplitz( np.zeros_like(y) , a).T - ( Aout.T * y ).T + An , y ) 
+            
+        return out
+        
+    def exact_jacobian(y, An=An, Aout=Aout, Ain=Ain):
+    
+        a = np.zeros_like(y)
+    
+        a [ range( 1 , len( a ) ) ] = y [ range( len( y ) - 1 ) ] 
+    
+        out = An - ( Aout.T * y ).T - np.diag( np.dot(Aout , y) ) + 2*Ain * lin.toeplitz( np.zeros_like(y) , a).T
+    
+        return out    
+
+    
+    sol = fsolve(root_finding ,  500*np.ones(N) , fprime = exact_jacobian , xtol = 1e-8)
+
+
+    evals = np.linalg.eig( dx*exact_jacobian( sol ) )[0]
+    real_part = np.real( evals )
+    imag_part = np.imag( evals )
+        
+    plt.close('all')
+    
+    
+    fig, ax = plt.subplots()
+    
+    ax.set_xlim( -2 , 0.5 )
+    ax.set_ylim( -1 , 1 )    
+    ax.set_aspect('equal')
+    ax.scatter(real_part , imag_part)
+    ax.grid(True, which='both')
+    ax.spines['left'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.yaxis.tick_left()
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['top'].set_color('none')
+    ax.xaxis.tick_bottom()
+    
+    plt.savefig('dx_jac_evals_'+str(mm) +'.png' , dpi=400 ,  bbox_inches='tight' )
 
 
 
