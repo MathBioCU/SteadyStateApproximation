@@ -55,18 +55,18 @@ def region_plots(nn, myarray = myarray):
    
 if __name__ == '__main__':
     
-    pool = mp.Pool(processes = mp.cpu_count() )
+    pool = mp.Pool( processes = mp.cpu_count() )
     ey_nana = range( len( myarray) )
     result = pool.map( region_plots , ey_nana )
     
     output = np.asarray(result)
-    fname = 'mydata'   
+    fname = 'pbe_data'   
     np.save(fname , output )
     
 end = time.time()
 
 
-print "Elapsed time " + str( round( (end - start) / 60 , 1)  ) + " minutes"
+print "Data generation time " + str( round( (end - start) / 60 , 1)  ) + " minutes"
 
 
 

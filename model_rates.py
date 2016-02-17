@@ -151,6 +151,43 @@ def initialization(N , a, b, c, x1=x1 , x0=x0):
 
     return (An , Ain , Aout , nu , N , dx)
 
+
+#Initializes uniform partition of (x0, x1) and approximate operator F_n
+def sinko_initialization(N , a, b, c, x1=x1 , x0=x0):
+    
+    #delta x
+    dx = ( x1 - x0 ) / N
+    
+    #Uniform partition into smaller frames
+    nu = x0 + np.arange(N+1) * dx
+    
+    
+    renew = partial( renewal , a=a)
+    
+    grow = partial( growth , b=b )
+            
+    rem = partial( removal , c=c )    
+    
+    #Removal operator
+    Remov_mat =  - np.diag( rem( nu[range( 1 , N + 1 )] ) )
+    
+    #Growth operator
+    Growth_mat = np.zeros( ( N , N ) )
+    
+    #Renewal operator
+    Renew_mat = np.zeros( ( N , N ) )
+    Renew_mat[0,:] = Renew_mat[0,:] + renew( nu[range( 1 , N+1 ) ] )
+    
+    for jj in range(N-1):
+        Growth_mat[jj,jj] = -grow( nu[jj+1] ) / dx
+        Growth_mat[jj+1,jj] = grow( nu[jj+1] ) / dx
+        
+    Growth_mat[N-1, N-1] = -grow( nu[N] ) / dx
+
+    return ( Renew_mat , Growth_mat , Remov_mat , nu , N , dx)
+
+
+
 #Approximate operator for the right hand side of the evolution equation
 def approximate_IG( y ,  An , Aout , Ain):
     
