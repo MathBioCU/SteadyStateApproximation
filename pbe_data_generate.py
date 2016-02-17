@@ -7,7 +7,7 @@ Created on Oct 14, 2015
 """
 
 
-from pbe_model_rates import *
+from model_rates import *
 from scipy.optimize import fsolve 
 
 import multiprocessing as mp
@@ -16,36 +16,10 @@ import time, cPickle
 
 start = time.time()
  
- 
 
-
-amin = 0
-amax = 15
-apart = 150
-
-x_ = np.linspace( amax , amin , apart , endpoint=False).tolist()
-x_.sort()
-
-bmin = 0
-bmax = 1
-bpart = 10
-
-y_ = np.linspace( bmax , bmin , bpart , endpoint=False).tolist()
-y_.sort()
-
-cmin = 0
-cmax = 5
-cpart = 50
-
-z_ = np.linspace( cmax , cmin , cpart , endpoint=False).tolist()
-z_.sort()
-
-x, y, z = np.meshgrid(x_, y_, z_, indexing='ij')
-
-
-x = np.ravel(x)
-y = np.ravel(y)
-z = np.ravel(z)
+x = np.ravel( grid_x )
+y = np.ravel( grid_y )
+z = np.ravel( grid_z )
 
 myarray = np.array([x, y, z]).T
 
@@ -64,11 +38,8 @@ def region_plots(nn, myarray = myarray):
     
     for mm in range( 10 ):
 
-        if mm < 5:    
-            seed = 10 * (mm + 1) * np.ones(N)            
-            
-        else:
-            seed = 10* ( mm - 4 ) * np.arange(N)
+    
+        seed = 2**mm * np.ones(N)            
             
         sol = fsolve( root_finding ,  seed , fprime = exact_jacobian , xtol = 1e-8 , full_output=1 )
 
@@ -89,15 +60,9 @@ if __name__ == '__main__':
     result = pool.map( region_plots , ey_nana )
     
     output = np.asarray(result)
-    
-    #output = output[ np.nonzero( output[: , 3 ] ) ]
-    
-    
-    fname = 'data'   
+    fname = 'mydata'   
     np.save(fname , output )
     
-    
-
 end = time.time()
 
 
