@@ -14,6 +14,7 @@ import scipy.linalg as lin
 import numpy as np
 
 
+ncpus = 2
 
 # Minimum and maximum floc sizes
 x0 = 0
@@ -60,6 +61,33 @@ def removal( x , c ):
 def fragmentation( x ):
 
     return  x
+
+
+amin = 0
+amax = 1
+apart = 10
+
+bmin = 0
+bmax = 1
+bpart = 10
+
+cmin = 0
+cmax = 1
+cpart = 10
+
+
+a_ = np.linspace( amax , amin , apart , endpoint=False ).tolist()
+a_.sort()
+
+b_ = np.linspace( bmax , bmin , bpart , endpoint=False ).tolist()
+b_.sort()
+
+
+c_ = np.linspace( cmax , cmin , cpart , endpoint=False ).tolist()
+c_.sort()
+
+
+grid_x, grid_y, grid_z = np.meshgrid(a_, b_, c_, indexing='ij')
 
     
 #Initializes uniform partition of (x0, x1) and approximate operator F_n
@@ -123,6 +151,8 @@ def initialization(N , a, b, c, x1=x1 , x0=x0):
     An = Gn - np.diag( Fout ) + Fin
 
     return (An , Ain , Aout , nu , N , dx)
+
+
 
 #Approximate operator for the right hand side of the evolution equation
 def approximate_IG( y ,  An , Aout , Ain):

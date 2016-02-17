@@ -11,7 +11,7 @@ from __future__ import division
 from scipy.spatial import  ConvexHull
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import griddata
-from model_rates import *
+from pbe_model_rates import *
 
 import numpy as np
 import matplotlib.pyplot as plt

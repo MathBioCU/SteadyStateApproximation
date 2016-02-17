@@ -7,7 +7,7 @@ Created on Oct 14, 2015
 """
 
 
-from model_rates import *
+from pbe_model_rates import *
 from scipy.optimize import fsolve 
 
 import multiprocessing as mp
@@ -55,7 +55,7 @@ def region_plots(nn, myarray = myarray):
    
 if __name__ == '__main__':
     
-    pool = mp.Pool( processes = mp.cpu_count() )
+    pool = mp.Pool( processes = ncpus )
     ey_nana = range( len( myarray) )
     result = pool.map( region_plots , ey_nana )
     

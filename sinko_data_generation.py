@@ -11,15 +11,16 @@ steady states of G is approximated by zeros of the matrix G_n.
 """
 
 from __future__ import division
-from model_rates import *
+from sinko_model_rates import *
 
 
 import multiprocessing as mp
 import numpy as np
 import time
 
-start = time.time()
 
+
+start = time.time()
 
   
 #Given a singular matrix this function returns nullspace of that matrix    
@@ -30,6 +31,7 @@ def null(a, rtol=1e-5):
     
     return v[rank:].T.copy() 
  
+
 
 x = np.ravel( grid_x )
 y = np.ravel( grid_y )
@@ -50,6 +52,7 @@ def region_plots( nn , Renewal_mat=Renewal_mat,
     
     pos_sol = 0
     eigs = 0
+    
     if np.sum( np.abs( null(An) ) ) > 0:
         pos_sol = 1
         eigs = np.max(  np.real ( np.linalg.eig(  An )[0] ) )  
@@ -60,14 +63,14 @@ def region_plots( nn , Renewal_mat=Renewal_mat,
 
 
 if __name__ == '__main__':
-    pool = mp.Pool( processes = mp.cpu_count() )
+    
+    pool = mp.Pool( processes = ncpus )
     ey_nana = range( len( myarray) )
     result = pool.map( region_plots , ey_nana )
     
     output = np.asarray(result)
     
     output = output[ np.nonzero( output[: , 3 ] ) ]
-    
     
     fname = 'sinko_data'    
     np.save(fname , output )
