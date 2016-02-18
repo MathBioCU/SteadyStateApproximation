@@ -29,6 +29,8 @@ For example to generate existence and stability regions for the population balan
 ``` 
 Generated existence and stability regions can be found in **images** folder. Similarly, run programs **pbe_jacobian_eigenvalue_plots.py** and **pbe_stability_plots.py** 
 
+Note that to simulate Sinko-Streifer model. Model rates should be updated in **sinko_model_rates.py** and the program **sinko_existence_region.py** should be run according to above instructions. 
+
 
 
 ## Citation
