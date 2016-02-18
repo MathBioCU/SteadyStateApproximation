@@ -11,7 +11,7 @@ from pbe_model_rates import *
 from scipy.optimize import fsolve 
 
 import multiprocessing as mp
-import time, cPickle
+import time , os
 
 
 start = time.time()
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     
     output = np.asarray(result)
     fname = 'pbe_data'   
-    np.save(fname , output )
+    np.save( os.path.join( 'data_files' , fname ) , output )
     
 end = time.time()
 

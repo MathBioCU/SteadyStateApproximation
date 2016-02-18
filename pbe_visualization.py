@@ -16,7 +16,57 @@ from pbe_model_rates import *
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import time
+import time, os
+
+
+
+
+
+start = time.time()
+
+fname = 'pbe_data.npy'
+
+output=np.load( os.path.join( 'data_files' , fname ) )
+output = output[ np.nonzero( output[: , 3 ] ) ]
+
+
+
+points = output[ :, 0:3]
+values = output[ : , -1 ]
+
+  
+eigs = griddata( points , values , ( grid_x , grid_y , grid_z ) )
+    
+out = np.array([np.ravel(grid_x) , np.ravel(grid_y)  , np.ravel(grid_z) , np.ravel(eigs)] ).T
+
+mypts = out[ np.nonzero( np.isnan(out[:, 3] )==False )[0] ]
+
+
+plt.close('all')
+
+fig = plt.figure(0)
+ax = fig.add_subplot(111, projection='3d')
+
+
+hull = ConvexHull( mypts[ : , 0:3] )
+simp = hull.points[ hull.vertices ]
+
+ax.plot_trisurf(mypts[:, 0] , mypts[:, 1] , mypts[:, 2] , triangles=hull.simplices, 
+                linewidth=0, color='#8A2BE2', shade=False)
+
+
+ax.view_init(  azim=115 , elev=25 )
+
+ax.set_xlabel( '$a$'    , fontsize=20 )
+ax.set_ylabel( '$b$'    , fontsize=20 )
+ax.set_zlabel( '$c$'    , fontsize=20 )
+ax.set_xlim( amin , amax )
+ax.set_ylim( bmin , bmax )
+ax.set_zlim( cmin , cmax )
+
+
+plt.savefig( os.path.join( 'images' , 'existence_region.png' ) , dpi=400 ,bbox_inches='tight')
+
 
 
 
@@ -51,53 +101,7 @@ def shiftedColorMap( cmap , start=0 , midpoint=0.5 , stop=1.0 , name='shiftedcma
     return newcmap
 
 
-start = time.time()
-
-fnames = 'pbe_data.npy'
-
-output=np.load( fnames )
-output = output[ np.nonzero( output[: , 3 ] ) ]
-
-
-
-points = output[ :, 0:3]
-values = output[ : , -1 ]
-
-  
-eigs = griddata( points , values , ( grid_x , grid_y , grid_z ) )
-    
-out = np.array([np.ravel(grid_x) , np.ravel(grid_y)  , np.ravel(grid_z) , np.ravel(eigs)] ).T
-
-mypts = out[ np.nonzero( np.isnan(out[:, 3] )==False )[0] ]
-
-
-plt.close('all')
-
-fig = plt.figure(0)
-ax = fig.add_subplot(111, projection='3d')
-
-
-hull = ConvexHull( mypts[ : , 0:3] )
-simp = hull.points[ hull.vertices ]
-
-ax.plot_trisurf(mypts[:, 0] , mypts[:, 1] , mypts[:, 2] , triangles=hull.simplices, 
-                linewidth=0, color='#8A2BE2', shade=False)
-
-
-ax.view_init(  azim=-90 , elev=40 )
-ax.set_xlabel( '$a$'    , fontsize=20 )
-ax.set_ylabel( '$b$'    , fontsize=20 )
-ax.set_zlabel( '$c$'    , fontsize=20 )
-ax.set_xlim( amin , amax )
-ax.set_ylim( bmin , bmax )
-ax.set_zlim( cmin , cmax )
-
-
-plt.savefig('existence_region.png', dpi=400 ,bbox_inches='tight')
-
-
-
-fig = plt.figure(2)
+fig = plt.figure(1)
 
 ax = fig.add_subplot(111, projection='3d')
 
@@ -109,7 +113,7 @@ ax.scatter( mypts[ pos_jac , 0] , mypts[ pos_jac , 1 ] , mypts[ pos_jac , 2 ] , 
 
 scatter1_proxy = matplotlib.lines.Line2D( [0],[0] , linestyle="none" , c='blue', marker = 'o' )
 scatter2_proxy = matplotlib.lines.Line2D( [0],[0] , linestyle="none" , c='red', marker = 'o' )
-ax.legend( [ scatter1_proxy , scatter2_proxy ] , ['stable', 'unstable'] , numpoints = 1)
+ax.legend( [ scatter1_proxy , scatter2_proxy ] , [ 'stable' , 'unstable' ] , numpoints = 1)
 
 ax.view_init(  azim=115 , elev=25 )
 ax.set_xlabel( '$a$'    , fontsize=20 )
@@ -119,7 +123,7 @@ ax.set_xlim( amin , amax )
 ax.set_ylim( bmin , bmax )
 ax.set_zlim( cmin , cmax )
 
-plt.savefig('stability_region.png' , dpi=400 ,bbox_inches='tight')
+plt.savefig( os.path.join( 'images' , 'stability_region.png' ) , dpi=400 , bbox_inches='tight' )
 
 
 end = time.time()

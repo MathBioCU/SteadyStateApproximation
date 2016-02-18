@@ -20,9 +20,9 @@ start = time.time()
 
 
 
-fnames = 'sinko_data.npy'
+fname = 'sinko_data.npy'
 
-output=np.load( fnames )
+output=np.load( os.path.join( 'data_files' , fname ) )
 output = output[ np.nonzero( output[: , 3 ] ) ]
 
 
@@ -53,13 +53,13 @@ ax.set_xlim( amin , amax )
 ax.set_ylim( bmin , bmax )
 ax.set_zlim( cmin , cmax )
 
-plt.savefig('sinko_exist_region.png', dpi=400)
+plt.savefig( os.path.join( 'images' , 'sinko_exist_region.png' ) , dpi=400)
 
 
 end = time.time()
 
 
-print "Elapsed time " + str( round( (end - start)  , 2)  ) + " seconds"
+print "Elapsed time", round( ( end - start )  , 2 ) ,  "seconds "
 
 
 

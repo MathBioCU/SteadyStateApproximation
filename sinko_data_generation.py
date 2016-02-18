@@ -16,7 +16,7 @@ from sinko_model_rates import *
 
 import multiprocessing as mp
 import numpy as np
-import time
+import time , os
 
 
 
@@ -61,7 +61,6 @@ def region_plots( nn , Renewal_mat=Renewal_mat,
     return ( myarray[nn , 0] , myarray[nn , 1] , myarray[nn, 2] , pos_sol , eigs )
     
 
-
 if __name__ == '__main__':
     
     pool = mp.Pool( processes = ncpus )
@@ -73,7 +72,7 @@ if __name__ == '__main__':
     output = output[ np.nonzero( output[: , 3 ] ) ]
     
     fname = 'sinko_data'    
-    np.save(fname , output )
+    np.save( os.path.join( 'data_files' , fname ) , output )
     
 
 end = time.time()

@@ -175,8 +175,6 @@ def jacobian_IG(y, An , Aout , Ain):
     out = An - ( Aout.T * y ).T - np.diag( np.dot(Aout , y) ) + 2*Ain * lin.toeplitz( np.zeros_like(y) , a).T
 
     return out    
-
-
     
    
 
