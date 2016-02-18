@@ -1,2 +1,4 @@
 ﻿## Steady State Approximation
 
+
+

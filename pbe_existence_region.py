@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Oct 14, 2015
+#Created on Oct 14, 2015
+#@author: Inom Mirzaev
 
-@author: Inom Mirzaev
+"""
+    This program computes existence and stability regions of the population
+    balance equations. Computed regions are plotted in 3D and saved in 'images' 
+    folder. All the model rates should be changed in 'pbe_model_rates.py' file.
+    The program has been written in parallel. Therefore, for the faster 
+    computation, the parameter 'ncpus' in 'pbe_model_rates' should 
+    be set to the maximum number of cores available. 
 
 """
 
@@ -31,23 +37,22 @@ def region_plots(nn, myarray = myarray):
     pos_sol = 0
     eigs2=0
 
+    #Initialize the approximate operators
     An, Ain, Aout, nu, N, dx = initialization( 50 , myarray[nn , 0] , myarray[nn , 1] , myarray[nn, 2] )
     
     root_finding  = partial( approximate_IG , An=An, Aout=Aout, Ain=Ain )    
     exact_jacobian = partial( jacobian_IG , An=An, Aout=Aout, Ain=Ain)
 
-    
+    #Search the root of the system for 10 different initial seeds
     for mm in range( 10 ):
 
-    
-        seed = 2**mm * np.ones(N)            
-            
+        seed = 2**mm * np.ones(N)                    
         sol = fsolve( root_finding ,  seed , fprime = exact_jacobian , xtol = 1e-8 , full_output=1 )
 
+        #Break the loop if a positive solution is found
         if sol[2]==1 and np.linalg.norm( sol[0] ) > 1 and np.all( sol[0] > 0 ):
             pos_sol = 1
-            eigs2 = np.max(  np.real ( np.linalg.eig(  exact_jacobian( sol[0] ) )[0] ) )  
-
+            eigs2 = np.max(  np.real ( np.linalg.eig(  exact_jacobian( sol[0] ) )[0] ) )
             break
         
     return ( myarray[nn , 0] , myarray[nn , 1] , myarray[nn, 2] , pos_sol ,  eigs2 )
@@ -56,14 +61,15 @@ def region_plots(nn, myarray = myarray):
    
 if __name__ == '__main__':
     
+    #Number of CPUs used for computations
     pool = mp.Pool( processes = ncpus )
     ey_nana = range( len( myarray) )
     result = pool.map( region_plots , ey_nana )
     
+    #Save the output in the 'data_files' folder
     output = np.asarray(result)
     fname = 'pbe_data'   
     np.save( os.path.join( 'data_files' , fname ) , output )
-
 
 
 
@@ -93,6 +99,9 @@ out = np.array([np.ravel(grid_x) , np.ravel(grid_y)  , np.ravel(grid_z) , np.rav
 mypts = out[ np.nonzero( np.isnan(out[:, 3] )==False )[0] ]
 
 
+"""
+    Plots the existence region
+"""
 plt.close('all')
 
 fig = plt.figure(0)
@@ -119,39 +128,9 @@ ax.set_zlim( cmin , cmax )
 plt.savefig( os.path.join( 'images' , 'existence_region.png' ) , dpi=400 ,bbox_inches='tight')
 
 
-
-
-def shiftedColorMap( cmap , start=0 , midpoint=0.5 , stop=1.0 , name='shiftedcmap'):
-    cdict = {
-        'red': [],
-        'green': [],
-        'blue': [],
-        'alpha': []
-    }
-
-    # regular index to compute the colors
-    reg_index = np.linspace(start, stop, 257)
-
-    # shifted index to match the data
-    shift_index = np.hstack([
-        np.linspace(0.0, midpoint, 128, endpoint=False), 
-        np.linspace(midpoint, 1.0, 129, endpoint=True)
-    ])
-
-    for ri, si in zip(reg_index, shift_index):
-        r, g, b, a = cmap(ri)
-
-        cdict['red'].append((si, r, r))
-        cdict['green'].append((si, g, g))
-        cdict['blue'].append((si, b, b))
-        cdict['alpha'].append((si, a, a))
-
-    newcmap = matplotlib.colors.LinearSegmentedColormap(name, cdict)
-    plt.register_cmap(cmap=newcmap)
-
-    return newcmap
-
-
+"""
+    Plots the stability region
+"""
 fig = plt.figure(1)
 
 ax = fig.add_subplot(111, projection='3d')
@@ -180,7 +159,7 @@ s
 end = time.time()
 
 
-print "Total time elapsed ", round( end - start , 2) , " seconds"
+print "Time elapsed ", round( end - start , 2) , " seconds"
 
 
 

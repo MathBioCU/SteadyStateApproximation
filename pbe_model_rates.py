@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+#Created on Feb 18, 2016
+#@author: Inom Mirzaev
+
 """
-Created on Oct 14, 2015
-
-@author: Inom Mirzaev
-
+    Model rates and parameters used for generation of existence and stability maps
+    of the population balance equations (PBEs) (see Mirzaev, I., & Bortz, D. M. (2015). 
+    arXiv:1507.07127 ). 
 """
 
 
@@ -13,6 +15,12 @@ from functools import partial
 import scipy.linalg as lin
 import numpy as np
 
+
+"""
+    Number of CPUs used for computation of existence and stability regions.
+    For faster computation number of CPUs should be set to the number of cores available on
+    your machine.
+"""
 
 ncpus = 2
 
@@ -27,7 +35,7 @@ def gam( y , x ):
     
     if type(x) == np.ndarray or type(y) == np.ndarray:        
         out[y>x] = 0
-
+    #Should return a vector
     return out 
     
 
@@ -35,50 +43,83 @@ def gam( y , x ):
 def aggregation( x , y ):
     
     out = ( x ** ( 1/3 ) + y ** ( 1/3 ) ) **3      
-
+    #Should return a vector
     return out
 
 
 #Renewal rate    
 def renewal(x , a):
-    
+    #Should return a vector    
     return a*(x + 1)
  
  
 #Growth rate   
 def growth(x ,  b ):
-
+    #Should return a vector
     return b*(x+1)
     
         
 #Removal rate    
 def removal( x , c ):
-
+     #Should return a vector
      return c * x
 
      
 #Fragmentation rate
 def fragmentation( x ):
-
+    #Should return a vector
     return  x
 
 
+"""
+    Parameters used for stability plots in 'pbe_stability_plots.py' and 
+    eigenvalue plots in 'pbe_jacobian_eigenvalue_plots.py'
+"""
 a = 1
 b = 0.5
 c = 1
 
 
+"""
+    Initialization of intervals for generation of existence and stability regions.
+    For smoother plots more discretization points should be given.
+"""
+
+#Interval initialization renewal function
+
+# a minimum 
 amin = 0
+
+# a maximum
 amax = 1
+
+#Number of discretization  points in a interval
 apart = 10
 
+# b minimum
 bmin = 0
+
+# b maximum
 bmax = 1
+
+#Number of discretization points in b interval
 bpart = 10
 
+# c minimum
 cmin = 0
+
+# c maximum
 cmax = 1
+
+# Number of discretization points in c interval
 cpart = 10
+
+
+
+"""
+    Unless you know what you are doing, 
+    the rest of the file should not be changed
+"""
 
 
 a_ = np.linspace( amax , amin , apart , endpoint=False ).tolist()
@@ -116,13 +157,17 @@ def initialization(N , a, b, c, x1=x1 , x0=x0):
     #Fragmentation out
     Fout = np.zeros( N )
     
+    #Re-initialize renewal function with parameter a
     renew = partial( renewal , a=a)
     
+    #Re-initialize growth function with parameter b
     grow = partial( growth , b=b )
-            
+    
+    #Re-initialize removal rate with paramter c        
     rem = partial( removal , c=c )
 
 
+    #Initialize matrices Ain, Aout and Fin
     for mm in range( N ):
     
         for nn in range( N ):
@@ -140,9 +185,10 @@ def initialization(N , a, b, c, x1=x1 , x0=x0):
                 Fin[mm, nn] = dx * gam( nu[mm+1], nu[nn+1] ) * fragmentation( nu[nn+1] )
 
 
+    #Initialize matrix Fout
     Fout = 0.5 * fragmentation( nu[range( 1 , N + 1 ) ] ) + rem( nu[range( 1 , N + 1 )] )
 
-    #Growth operator
+    #Growth matrix
     Gn=np.zeros( ( N , N ) )
 
     for jj in range(N-1):
