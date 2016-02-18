@@ -17,7 +17,6 @@ from functools import partial
 import numpy as np
 
 
-
 """
     Number of CPUs used for computation of existence and stability regions.
     For faster computation number of CPUs should be set to the number of cores available on

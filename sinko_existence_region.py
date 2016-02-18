@@ -126,6 +126,6 @@ plt.savefig( os.path.join( 'images' , 'sinko_exist_region.png' ) , dpi=400)
 end = time.time()
 
 
-print "Elapsed time", round( ( end - start )  , 2 ) ,  "seconds "
+print "Elapsed time", round( end - start   , 2 ) ,  "seconds "
 
 

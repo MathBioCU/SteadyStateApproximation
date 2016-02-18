@@ -155,7 +155,6 @@ ax.set_zlim( cmin , cmax )
 
 plt.savefig( os.path.join( 'images' , 'stability_region.png' ) , dpi=400 , bbox_inches='tight' )
 
-s   
 end = time.time()
 
 
