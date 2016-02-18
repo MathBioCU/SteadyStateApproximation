@@ -27,9 +27,7 @@ For example to generate existence and stability regions for the population balan
 ```
  python pbe_exixtence_region.py 
 ``` 
-4. Generated existence and stability regions can be found in **images** folder.
-
-Similarly, run programs **pbe_jacobian_eigenvalue_plots.py** and **pbe_stability_plots.py** 
+Generated existence and stability regions can be found in **images** folder. Similarly, run programs **pbe_jacobian_eigenvalue_plots.py** and **pbe_stability_plots.py** 
 
 
 
@@ -43,7 +41,7 @@ Cite the paper:
 Mirzaev I., Bortz D. M. (2016) A numerical framework for computing steady states of size-structured population models and their stability
 ```
 
-Cite the code:
+Cite the software package:
 
 ```
 Mirzaev, I. (2016). Steady state approximation. https://github.com/MathBioCU/SteadyStateApproximation.
