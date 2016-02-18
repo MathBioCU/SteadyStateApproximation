@@ -19,15 +19,11 @@ import os
 
 
 
-largest_eig = np.zeros(16)
+largest_eig = np.zeros(20)
 
-a = 1
-b = 0.5
-c = 1
-
-for nn in range(16):
+for nn in range(20):
     
-    An, Ain, Aout, nu, N, dx = initialization( ( nn + 1) * 5 + 20  , 3 , 1, 1)
+    An, Ain, Aout, nu, N, dx = initialization( ( nn + 1) * 5  , a , b, c)
     
     root_finding  = partial( approximate_IG , An=An, Aout=Aout, Ain=Ain )    
     exact_jacobian = partial( jacobian_IG , An=An, Aout=Aout, Ain=Ain)
@@ -44,8 +40,7 @@ for nn in range(16):
             break
     largest_eig[ nn ] = np.max( np.real( lin.eig( dx * exact_jacobian( sol[0] ) ) [0] ) )
     
- 
- 
+  
 An, Ain, Aout, nu, N, dx = initialization( 1000 , a , b, c )
 
 root_finding  = partial( approximate_IG , An=An, Aout=Aout, Ain=Ain )    
@@ -64,7 +59,7 @@ for mm in range( 10 ):
 
 larg_eval_for_1000 = np.max( np.real( lin.eig( dx * exact_jacobian( sol[0] ) ) [0] ) )
 
-dim_size = np.arange(25, 105, 5)
+dim_size = np.arange(5, 105, 5)
 
 
 plt.close('all')
@@ -77,12 +72,12 @@ plt.plot(dim_size , largest_eig , linewidth=1 , color='blue' ,
 plt.axhline(y =  larg_eval_for_1000 , color='k' , linestyle='--')
 
 myaxis = list ( plt.axis() )
-myaxis[0] = 20
+myaxis[0] = 4.5
 myaxis[1] = 100.5
 myaxis[-1] = 0.025
 plt.axis( myaxis )
 
-plt.xticks( [20 , 40, 60, 80, 100] )
+plt.xticks( [5, 20 , 40, 60, 80, 100] )
 
 plt.xlabel('$n$' , fontsize=20)
 plt.ylabel('Largest real part' , fontsize=15)
@@ -91,7 +86,7 @@ fname = 'evals_convergence.png'
 plt.savefig( os.path.join( 'images' , fname ) , dpi=400 ,  bbox_inches='tight')
 
 
-for nn in [25 , 50 , 200]:
+for nn in [20 , 50 , 200]:
     
     An, Ain, Aout, nu, N, dx = initialization( nn , a , b , c )
     
@@ -117,8 +112,8 @@ for nn in [25 , 50 , 200]:
     
     fig, ax = plt.subplots()
     
-    ax.set_xlim( -4 , 0.5 )
-    ax.set_ylim( -2 , 2 )    
+    #ax.set_xlim( -2 , 0.5 )
+    #ax.set_ylim( -1 , 1 )    
     ax.set_aspect('equal')
     ax.scatter(real_part , imag_part)
     ax.grid(True, which='both')

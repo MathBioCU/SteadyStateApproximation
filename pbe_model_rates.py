@@ -63,6 +63,11 @@ def fragmentation( x ):
     return  x
 
 
+a = 1
+b = 0.5
+c = 1
+
+
 amin = 0
 amax = 1
 apart = 10

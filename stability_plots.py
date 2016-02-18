@@ -29,8 +29,10 @@ import time , os
 
 
 start = time.time()
-
-An, Ain, Aout, nu, N, dx = initialization( 100 , 1 , 0.5 , 1 )
+a = 1
+b = 0.5
+c = 1
+An, Ain, Aout, nu, N, dx = initialization( 100 , a ,  b , c )
 
 
 
