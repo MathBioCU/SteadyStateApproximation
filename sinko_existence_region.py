@@ -85,7 +85,7 @@ if __name__ == '__main__':
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import griddata
 import matplotlib.pyplot as plt
-
+import matplotlib.tri as mtri
 
 fname = 'sinko_data.npy'
 output=np.load( os.path.join( 'data_files' , fname ) )
@@ -109,7 +109,10 @@ plt.close('all')
 fig = plt.figure(0)
 ax = fig.add_subplot(111, projection='3d')
 
-ax.plot_trisurf(mypts[:, 0] , mypts[:, 1] , mypts[:, 2] , linewidth=0, cmap='jet', shade=True)
+tri = mtri.Triangulation( mypts[ : , 0 ] , mypts[ : , 1] )
+
+ax.plot_trisurf(mypts[:, 0] , mypts[:, 1] , mypts[:, 2] , 
+                triangles = tri.triangles , edgecolor='none', cmap='jet', shade=True)
 
 
 ax.view_init( azim=100 , elev=26  )

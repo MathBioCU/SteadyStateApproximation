@@ -40,7 +40,7 @@ If you use this program to do research that leads to publication, we ask that yo
 Cite the paper: 
 
 ```
-Mirzaev I., Bortz D. M. (2016) A numerical framework for computing steady states of size-structured population models and their stability
+Mirzaev I., Bortz D. M. (2016) A numerical framework for computing steady states of size-structured population models and their stability , *arXiv:1602.07033*
 ```
 
 Cite the software package:
